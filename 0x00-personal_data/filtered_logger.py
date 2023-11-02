@@ -4,8 +4,9 @@ function called filter_datum
 """
 import logging
 import re
-import mysql.connector
+from mysql.connector import connection
 from typing import List
+import os
 
 
 #  fields to be obfuscated
