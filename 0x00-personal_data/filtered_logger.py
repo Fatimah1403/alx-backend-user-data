@@ -45,3 +45,17 @@ class RedactingFormatter(logging.Formatter):
             self.fields, self.REDACTION, super(
                 RedactingFormatter, self).format(record),
             self.SEPARATOR)
+
+    def get_logger():
+        """returns a logging.Logger object.
+            It should have a StreamHandler with
+            RedactingFormatter as formatter.
+        """
+        logger = logging.logger(name="user_data")
+        logger.propagate = False
+        logger.setLevel(logging.INFO)
+        str_handler = logging.StreamHandler()
+        str_handler.setFormatter(RedactingFormatter(PII_FIELDS))
+        logger.addHandler(str_handler)
+
+        return logger
