@@ -46,7 +46,7 @@ class RedactingFormatter(logging.Formatter):
                 RedactingFormatter, self).format(record),
             self.SEPARATOR)
 
-    def get_logger():
+    def get_logger() -> logging.Logger:
         """returns a logging.Logger object.
             It should have a StreamHandler with
             RedactingFormatter as formatter.
