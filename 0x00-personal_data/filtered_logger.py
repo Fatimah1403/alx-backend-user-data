@@ -51,11 +51,12 @@ class RedactingFormatter(logging.Formatter):
             It should have a StreamHandler with
             RedactingFormatter as formatter.
         """
-        logger = logging.logger(name="user_data")
-        logger.propagate = False
+        logger = logging.getLogger(name="user_data")
         logger.setLevel(logging.INFO)
+        logger.propagate = False
         str_handler = logging.StreamHandler()
         str_handler.setFormatter(RedactingFormatter(PII_FIELDS))
         logger.addHandler(str_handler)
 
         return logger
+
