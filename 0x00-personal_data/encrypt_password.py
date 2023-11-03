@@ -7,6 +7,6 @@ from bcrypt import hashpw
 
 def hash_password(password):
     """returns a salted, hashed password"""
-    password = password.encode()
-    hash_pass = hashpw(passsword, bcrypt.gensalt())
-    return hash_pass
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed_password
