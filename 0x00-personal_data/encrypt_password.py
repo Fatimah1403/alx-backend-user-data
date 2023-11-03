@@ -1,13 +1,15 @@
-#!/uisr/bin/env python3
+#!/usr/bin/env python3
 """
 Hashing with bcrypt
 """
 import bcrypt
-
+from bcrypt import hashpw
 
 def hash_password(password: str) -> bytes:
-    """ Hash a password using Bcrypt """
-    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    """returns a salted, hashed password"""
+    b = password.encode("utf-8")
+    hashed = hashpw(b, bcrypt.gensalt())
+    return hashed
 
 
 def is_valid(hashed_password: bytes, password: str) -> bool:
