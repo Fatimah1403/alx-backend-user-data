@@ -6,7 +6,7 @@ import logging
 import re
 from mysql.connector import connection
 from typing import List
-import os
+from os import environ
 
 
 #  fields to be obfuscated
@@ -65,13 +65,13 @@ def get_db() -> connection.MYSQLConnection:
     """
     Get database credentials from environments
     """
-    db_username = os.getenv("PERSONAL_DATA_DB_USERNAME", "root")
-    db_password = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
-    db_host = os.getenv("PERSONAL_DATA_DB_HOST", "localhost")
-    db_name = os.getenv(" PERSONAL_DATA_DB_NAME")
+    db_username = environ.get("PERSONAL_DATA_DB_USERNAME", "root")
+    db_password = environ.get("PERSONAL_DATA_DB_PASSWORD", "")
+    db_host = environ.get("PERSONAL_DATA_DB_HOST", "localhost")
+    db_name = environ.get(" PERSONAL_DATA_DB_NAME")
     connect = connection.MYSQLConnection(
             user=db_username,
             password=db_password,
             host=db_host,
-            name=db_name)
+            database=db_name)
     return connect
