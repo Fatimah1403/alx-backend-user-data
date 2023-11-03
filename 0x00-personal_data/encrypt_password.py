@@ -3,13 +3,12 @@
 Hashing with bcrypt
 """
 import bcrypt
-from bcrypt import hashpw
 
 
-def hash_password(password):
+def hash_password(password: str) -> bytes:
     """returns a salted, hashed password"""
     b = password.encode()
-    hashed = hashpw(b, bcrypt.gensalt())
+    hashed = hashpw(b, bcrypt.gensalt("utf-8"))
     return hashed
 
 
