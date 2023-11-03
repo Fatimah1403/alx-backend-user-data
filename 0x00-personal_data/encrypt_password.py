@@ -3,13 +3,11 @@
 Hashing with bcrypt
 """
 import bcrypt
-from bcrypt import hashpw
+
 
 def hash_password(password: str) -> bytes:
-    """returns a salted, hashed password"""
-    b = password.encode("utf-8")
-    hashed = hashpw(b, bcrypt.gensalt())
-    return hashed
+    """ Hash a password using Bcrypt """
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
 
 def is_valid(hashed_password: bytes, password: str) -> bool:
