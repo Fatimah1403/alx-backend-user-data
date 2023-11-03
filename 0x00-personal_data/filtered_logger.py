@@ -75,3 +75,26 @@ def get_db() -> connection.MySQLConnection:
         host=db_host,
         database=db_name)
     return connector
+
+
+def main():
+    """
+    database connection using get_db and
+    retrieve all rows in the users"""
+    db = get_db()
+    cur = db.cursor()
+
+    fields = "name, email, phone, ssn, password, ip, last_login, user_agent"
+    logger = get_logger()
+    query_run = "SELECT {} FROM users".format(fields)
+    cur.execute(query_run)
+    fetch_data = cur.fetchall()
+    for row in fetch_data:
+        message = "".join("{}={}; ".format(key, value) for key, value in zip(fields, row))
+        logger.info(message.strip())
+    cur.close()
+    db.close
+
+
+if __name__ == "__main__":
+    main()
