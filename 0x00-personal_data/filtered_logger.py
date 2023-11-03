@@ -2,10 +2,10 @@
 """
 function called filter_datum
 """
+from typing import List
 import logging
 import re
 from mysql.connector import connection
-from typing import List
 from os import environ
 
 
