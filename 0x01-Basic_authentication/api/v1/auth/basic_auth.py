@@ -8,4 +8,3 @@ import base64
 class BasicAuth(Auth):
     """ Basic Authentication inheriting from Auth """
     pass
-
