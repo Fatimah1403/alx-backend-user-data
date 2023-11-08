@@ -84,9 +84,11 @@ class BasicAuth(Auth):
         try:
             auth_header = self.authorization_header(request)
             # Decode auth header value, get user data using Basic Auth methods
-        encode_header = self.extract_base64_authorization_header(auth_header)
-        decoded_header = self.decode_base64_authorization_header(encode_header)
-        user_creds = self.extract_user_credentials(decoded_header)
-        return self.user_object_from_credentials(*user_creds)
+            encode_header = self.extract_base64_authorization_header(
+                    auth_header)
+            decoded_header = self.decode_base64_authorization_header(
+                    encode_header)
+            user_creds = self.extract_user_credentials(decoded_header)
+            return self.user_object_from_credentials(*user_creds)
         except Exception:
             return None
