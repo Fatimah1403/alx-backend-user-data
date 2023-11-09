@@ -32,22 +32,26 @@ elif AUTH_TYPE == "session_db_auth":
 
 
 @app.before_request
-def request_filter() -> None:
-    """ Checks if request needs authorization
+def bef_req():
     """
-    excluded_paths = [
-        '/api/v1/status/',
-        '/api/v1/unauthorized/',
-        '/api/v1/forbidden/'
+    Filter each request before it's handled by the proper route
+    """
+    if auth is None:
+        pass
+    else:
+        setattr(request, "current_user", auth.current_user(request))
+        excluded = [
+            '/api/v1/status/',
+            '/api/v1/unauthorized/',
+            '/api/v1/forbidden/',
+            '/api/v1/auth_session/login/'
         ]
-
-    if auth:
-        if auth.require_auth(request.path, excluded_paths):
-            if auth.authorization_header(request) is None:
-                abort(401)
-            request.current_user = auth.current_user(request)
-            if request.current_user(request) is None:
-                abort(403)
+        if auth.require_auth(request.path, excluded):
+            cookie = auth.session_cookie(request)
+            if auth.authorization_header(request) is None and cookie is None:
+                abort(401, description="Unauthorized")
+            if auth.current_user(request) is None:
+                abort(403, description="Forbidden")
 
 
 @app.errorhandler(404)
@@ -59,14 +63,14 @@ def not_found(error) -> str:
 
 @app.errorhandler(401)
 def unauthorized(error) -> str:
-    """ Unauthorized handler
+    """ Request unauthorized handler
     """
     return jsonify({"error": "Unauthorized"}), 401
 
 
 @app.errorhandler(403)
 def forbidden(error) -> str:
-    """ Forbidden handler
+    """ Request unauthorized handler
     """
     return jsonify({"error": "Forbidden"}), 403
 

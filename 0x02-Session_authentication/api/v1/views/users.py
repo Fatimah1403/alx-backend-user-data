@@ -41,7 +41,7 @@ def view_one_user(user_id: str = None) -> str:
 
 
 @app_views.route('/users/<user_id>', methods=['DELETE'], strict_slashes=False)
-def delete_user(user_id: str=None) -> str:
+def delete_user(user_id: str = None) -> str:
     """ DELETE /api/v1/users/:id
     Path parameter:
       - User ID
@@ -51,7 +51,7 @@ def delete_user(user_id: str=None) -> str:
     """
     if user_id is None:
         abort(404)
-    user=User.get(user_id)
+    user = User.get(user_id)
     if user is None:
         abort(404)
     user.remove()
@@ -70,34 +70,34 @@ def create_user() -> str:
       - User object JSON represented
       - 400 if can't create the new User
     """
-    rj=None
-    error_msg=None
+    rj = None
+    error_msg = None
     try:
-        rj=request.get_json()
+        rj = request.get_json()
     except Exception as e:
-        rj=None
+        rj = None
     if rj is None:
-        error_msg="Wrong format"
+        error_msg = "Wrong format"
     if error_msg is None and rj.get("email", "") == "":
-        error_msg="email missing"
+        error_msg = "email missing"
     if error_msg is None and rj.get("password", "") == "":
-        error_msg="password missing"
+        error_msg = "password missing"
     if error_msg is None:
         try:
-            user=User()
-            user.email=rj.get("email")
-            user.password=rj.get("password")
-            user.first_name=rj.get("first_name")
-            user.last_name=rj.get("last_name")
+            user = User()
+            user.email = rj.get("email")
+            user.password = rj.get("password")
+            user.first_name = rj.get("first_name")
+            user.last_name = rj.get("last_name")
             user.save()
             return jsonify(user.to_json()), 201
         except Exception as e:
-            error_msg="Can't create User: {}".format(e)
+            error_msg = "Can't create User: {}".format(e)
     return jsonify({'error': error_msg}), 400
 
 
 @app_views.route('/users/<user_id>', methods=['PUT'], strict_slashes=False)
-def update_user(user_id: str=None) -> str:
+def update_user(user_id: str = None) -> str:
     """ PUT /api/v1/users/:id
     Path parameter:
       - User ID
@@ -111,19 +111,19 @@ def update_user(user_id: str=None) -> str:
     """
     if user_id is None:
         abort(404)
-    user=User.get(user_id)
+    user = User.get(user_id)
     if user is None:
         abort(404)
-    rj=None
+    rj = None
     try:
-        rj=request.get_json()
+        rj = request.get_json()
     except Exception as e:
-        rj=None
+        rj = None
     if rj is None:
         return jsonify({'error': "Wrong format"}), 400
     if rj.get('first_name') is not None:
-        user.first_name=rj.get('first_name')
+        user.first_name = rj.get('first_name')
     if rj.get('last_name') is not None:
-        user.last_name=rj.get('last_name')
+        user.last_name = rj.get('last_name')
     user.save()
     return jsonify(user.to_json()), 200
