@@ -68,6 +68,6 @@ class DB:
                 setattr(user_rec, key, value)
             else:
                 raise ValueError
-
+      
         self._session.commit()
         return None
