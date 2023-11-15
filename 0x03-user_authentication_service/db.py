@@ -53,7 +53,7 @@ class DB:
         if not user_data:
             raise NoResultFound
         return user_data
-    
+
     def update_user(self, user_id: int, **kwargs) -> None:
         """_summary_
 
@@ -62,13 +62,12 @@ class DB:
             to locate the user to update
         """
         user_rec = self.find_user_by(id=user_id)
-        
+  
         for key, value in kwargs.items():
             if hasattr(user_rec, key):
                 setattr(user_rec, key, value)
             else:
                 raise ValueError
-            
+      
         self._session.commit()
         return None
-        
