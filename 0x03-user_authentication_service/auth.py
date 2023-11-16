@@ -131,18 +131,15 @@ def update_password(self, reset_token: str, password: str) -> None:
     Returns:
         _type_: _description_
     """
-    if password is None or not isinstance(password, str):
-        raise ValueError
     if reset_token is None or not isinstance(reset_token, str):
-        raise ValueError
-
+        raise ValueError from None
+    if password is None or not isinstance(password, str):
+        raise ValueError from None
     try:
         user = self._db.find_user_by(reset_token=reset_token)
+        hashed_password = _hash_password(password)
+        self._db.update_user(user.id, reset_token=None,
+                             hashed_password=hashed_password)
+        return None
     except NoResultFound:
-        raise ValueError
-    new_hashed_password = _hash_password(password)
-    self._db.update_user(
-        user.id,
-        new_hashed_password=new_hashed_password,
-        reset_token=None
-        )
+        raise ValueError from None
