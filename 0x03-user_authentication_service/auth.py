@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Authentication
 """
-from bcrypt import hashpw, gensalt
+from bcrypt import hashpw, gensalt, checkpw
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import InvalidRequestError
+from uuid import uuid4
 from user import User
 from db import DB
 
@@ -18,6 +19,14 @@ def _hash_password(password: str) -> bytes:
         bytes: _description_
     """
     return hashpw(password.encode("utf-8"), gensalt())
+
+
+def _generate_uuid() -> str:
+    """
+    Generates UUID
+    Returns string representation of new UUID
+    """
+    return str(uuid4())
 
 
 class Auth:
@@ -42,3 +51,32 @@ class Auth:
             raise ValueError("User {} already exists".format(email))
         except NoResultFound:
             return self._db.add_user(email, _hash_password(password))
+
+    def valid_login(self, email: str, password: str) -> bool:
+        """
+        It should expect email and password required arguments and return a boolean.  # noqa: E501
+
+        Try locating the user by email. If it exists, check the password with bcrypt.checkpw.  #  noqa: E501
+        If it matches return True. In any other case, return False.
+        """
+        try:
+            user_login = self._db.find_user_by(email=email)
+            return checkpw(password.encode("utf-8"), user_login.hashed_password)  # noqa: E501
+        except NoResultFound:
+            return False
+
+    def create_session(self, email: str) -> str:
+        """
+        create_session method. It takes an email string argument
+        and returns the session ID as a string.
+        The method should find the user corresponding to the email,
+        generate a new UUID and store it in the database as
+        the user’s session_id, then return the session ID.
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+            session_id = _generate_uuid()
+            self._db.update_user(user.id, session_id=session_id)
+            return session_id
+        except NoResultFound:
+            return None
