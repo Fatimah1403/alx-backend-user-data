@@ -2,6 +2,7 @@
 """app Flask app
 """
 from flask import Flask, jsonify, request, abort, redirect
+from sqlalchemy.orm.exc import NoResultFound
 from auth import Auth
 
 app = Flask(__name__)
@@ -39,7 +40,25 @@ def register_users():
         return jsonify({"message": "email already registered"}), 200
 
 
+@app.route('/sessions', methods=['POST'], strict_slashes=False)
+def login() -> str:
+    """ POST /sessions
+    Creates new session for user, stores as cookie
+    Email and pswd fields in x-www-form-urlencoded request
+    Return:
+      - JSON payload
+    """
+    email = request.form.get("email")
+    password = request.form.get("password")
+    valid_user = AUTH.valid_login(email, password)
 
+    if not valid_user:
+        abort(401)
+    session_id = AUTH.create_session(email)
+    message = {"email": email, "message": "logged in"}
+    response = jsonify(message)
+    response.set_cookie("session_id", session_id)
+    return response
 
 
 if __name__ == "__main__":
