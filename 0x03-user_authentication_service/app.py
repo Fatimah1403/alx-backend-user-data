@@ -85,7 +85,7 @@ def profile():
      If the user exist, respond with a 200 HTTP status
      and the following JSON payload:
     """
-    session_cookies = request.cookies.get("session_id")
+    session_cookies = request.cookies.get("session_id", None)
     if session_cookies is None:
         abort(403)
     user = AUTH.get_user_from_session_id(session_cookies)
