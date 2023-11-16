@@ -98,9 +98,9 @@ class Auth:
             return None
         try:
             found_user = self._db.find_user_by(id=user_id)
-            self._db.update_user(found_user, session_id=None)
+            self._db.update_user(found_user.id, session_id=None)
 
-        except ValueError:
+        except NoResultFound:
             return None
 
     def get_reset_password_token(self, email: str) -> str:
@@ -110,10 +110,10 @@ class Auth:
         If it exists, generate a UUID and update the user’s
         reset_token database field. Return the token.
         """
-        user = self._db.find_user_by(email=email)
         if email is None or not isinstance(email, str):
             raise ValueError
         try:
+            user = self._db.find_user_by(email=email)
             reset_token = _generate_uuid()
             self._db.update_user(user.id, reset_token=reset_token)
             return reset_token
