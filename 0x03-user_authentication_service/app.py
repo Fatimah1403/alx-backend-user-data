@@ -86,13 +86,13 @@ def profile():
      If the user exist, respond with a 200 HTTP status
      and the following JSON payload:
     """
-    session_cookies = request.cookies.get("session_id", None)
-    if session_cookies is None:
+    session_id = request.cookies.get('session_id')
+    if session_id is None:
         abort(403)
-    user = AUTH.get_user_from_session_id(session_cookies)
+    user = AUTH.get_user_from_session_id(session_id)
     if user is None:
         abort(403)
-    return jsonify({"email", user.email}), 200
+    return jsonify({"email": user.email}), 200
 
 
 @app.route("/reset_password", methods=["POST"], strict_slashes=False)
@@ -104,17 +104,16 @@ def get_reset_password_token():
     a 403 status code. Otherwise,generate a token and
     respond with a 200 HTTP status and the following JSON payload:
     """
-    email = request.form.get("email")
+    email = request.form.get('email')
     if email is None:
-        abort(403, "email is a required field")
+        abort(403, 'email is required')
     try:
-        user_email = AUTH._db.find_user_by(email=email)
+        user = AUTH._db.find_user_by(email=email)
         reset_token = AUTH.get_reset_password_token(email)
-        message = {"email": user_email, "reset_token": reset_token}
-        return jsonify(message)
+        return jsonify({"email": user.email, "reset_token": reset_token}), 200
     except Exception:
         abort(403)
-        
-        
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5001")
