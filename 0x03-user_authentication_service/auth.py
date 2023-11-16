@@ -82,7 +82,7 @@ class Auth:
         except NoResultFound:
             return None
 
-    def get_user_from_session_id(self, session_id: str) -> Union[str, None]:
+    def get_user_from_session_id(self, session_id: str) -> User:
         """ Finds user by session_id """
         if session_id is None:
             return None
@@ -119,3 +119,30 @@ class Auth:
             return reset_token
         except NoResultFound:
             raise ValueError
+
+
+def update_password(self, reset_token: str, password: str) -> None:
+    """update the user’s hashed_password
+
+    Args:
+        reset_token (str): _description_
+        password (str): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    if password is None or not isinstance(password, str):
+        raise ValueError
+    if reset_token is None or not isinstance(reset_token, str):
+        raise ValueError
+
+    try:
+        user = self._db.find_user_by(reset_token=reset_token)
+    except NoResultFound:
+        raise ValueError
+    new_hashed_password = _hash_password(password)
+    self._db.update_user(
+        user.id,
+        new_hashed_password=new_hashed_password,
+        reset_token=None
+        )

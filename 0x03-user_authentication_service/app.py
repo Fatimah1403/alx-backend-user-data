@@ -105,7 +105,7 @@ def get_reset_password_token():
     respond with a 200 HTTP status and the following JSON payload:
     """
     email = request.form.get("email")
-    if not email:
+    if email is None:
         abort(403, "email is a required field")
     try:
         user_email = AUTH._db.find_user_by(email=email)
@@ -114,7 +114,7 @@ def get_reset_password_token():
         return jsonify(message)
     except Exception:
         abort(403)
-
-
+        
+        
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port="5000")
+    app.run(host="0.0.0.0", port="5001")
