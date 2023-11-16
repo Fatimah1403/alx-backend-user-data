@@ -89,7 +89,7 @@ def profile():
     if session_cookies is None:
         abort(403)
     user = AUTH.get_user_from_session_id(session_cookies)
-    if session_cookies is None or user is None:
+    if user is None:
         abort(403)
     return jsonify({"email", user.email}), 200
 
