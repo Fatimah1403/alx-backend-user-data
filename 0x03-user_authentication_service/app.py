@@ -4,6 +4,7 @@
 from flask import Flask, jsonify, request, abort, redirect
 from sqlalchemy.orm.exc import NoResultFound
 from auth import Auth
+from db import DB
 
 app = Flask(__name__)
 AUTH = Auth()
@@ -92,6 +93,27 @@ def profile():
     if user is None:
         abort(403)
     return jsonify({"email", user.email}), 200
+
+
+@app.route("/reset_password", methods=["POST"], strict_slashes=False)
+def get_reset_password_token():
+    """
+    The request is expected to contain form data with the "email" field.
+
+    If the email is not registered, respond with
+    a 403 status code. Otherwise,generate a token and
+    respond with a 200 HTTP status and the following JSON payload:
+    """
+    email = request.form.get("email")
+    if not email:
+        abort(403, "email is a required field")
+    try:
+        user_email = AUTH._db.find_user_by(email=email)
+        reset_token = AUTH.get_reset_password_token(email)
+        message = {"email": user_email, "reset_token": reset_token}
+        return jsonify(message)
+    except Exception:
+        abort(403)
 
 
 if __name__ == "__main__":
