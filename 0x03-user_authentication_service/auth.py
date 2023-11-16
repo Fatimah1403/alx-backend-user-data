@@ -98,7 +98,7 @@ class Auth:
             return None
         try:
             found_user = self._db.find_user_by(id=user_id)
-            self._db.update_user(user_id, session_id=None)
+            self._db.update_user(found_user, session_id=None)
 
         except ValueError:
             return None
@@ -111,7 +111,7 @@ class Auth:
         reset_token database field. Return the token.
         """
         user = self._db.find_user_by(email=email)
-        if email is not isinstance(email, str) or email is None:
+        if email is None or not isinstance(email, str):
             raise ValueError
         try:
             reset_token = _generate_uuid()
